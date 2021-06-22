@@ -5,6 +5,7 @@ const partials = require('express-partials');
 const bodyParser = require('body-parser');
 const Auth = require('./middleware/auth');
 const models = require('./models');
+const parseCookies = require('./middleware/cookieParser');
 
 const app = express();
 
@@ -14,10 +15,11 @@ app.use(partials());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
+app.use(parseCookies);
 
 
 
-app.get('/',
+app.get('/', Auth.createSession,
   (req, res) => {
     res.render('index');
   });
@@ -104,7 +106,7 @@ app.post('/login',
     let {username, password} = req.body;
     return models.Users.get({username: `${username}`})
       .then((user) => {
-        if (user === undefined) {
+        if (!user) {
           res.status(200).redirect('/login');
         } else {
           let salt = user.salt;
