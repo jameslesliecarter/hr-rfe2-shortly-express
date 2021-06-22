@@ -2,6 +2,7 @@ node_modules
 db/*.sqlite
 *.DS_Store
 docs
+package-lock.json
 
 # Floobits
 .floo
