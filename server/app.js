@@ -107,7 +107,13 @@ app.post('/login',
         if (user === undefined) {
           res.status(200).redirect('/login');
         } else {
-          res.status(200).redirect('/');
+          let salt = user.salt;
+          let stored = user.password;
+          if (models.Users.compare(password, stored, salt)) {
+            res.status(200).redirect('/');
+          } else {
+            res.status(200).redirect('/login');
+          }
         }
       })
       .catch((error) => {
